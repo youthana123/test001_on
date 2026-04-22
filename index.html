@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Safety Helmet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page show" id="pgHome">
+  <div class="home-inner" style="margin:auto;">
+    <span class="h-helmet">⛑️</span>
+    
+    <h1 class="h-title">SMART HELMET</h1>
+    <p class="h-sub">ระบบหมวกนิรภัยอัจฉริยะ</p>
+    <div class="role-row">
+      <div class="role-btn w" onclick="startScanner()">
+        <span class="ri">⛑️</span>
+        <div class="rl">ผู้สวมหมวก</div>
+        <div class="rd">แตะเพื่อเปิดกล้อง<br>และสแกนหมวก</div>
+      </div>
+      <div class="role-btn b" onclick="go('pgLogin')">
+        <span class="ri">👔</span>
+        <div class="rl">หัวหน้างาน</div>
+        <div class="rd">ติดตามหมวกทุกใบ<br>และรับแจ้งเตือน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pgScan">
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nav-icon">📷</div>
+      <div><div class="nav-title">สแกน QR Code</div><div class="nav-sub">Scanner</div></div>
+    </div>
+    <div class="nav-r">
+      <button class="btn-nav" onclick="stopScanner()">← กลับ</button>
+    </div>
+  </nav>
+  <div class="scan-wrap">
+    <div class="scan-text">
+      <h2 style="color:var(--white); margin-bottom: 5px;">สแกนที่หมวกของคุณ</h2>
+      <p style="color:var(--txt2); font-size: 0.85rem;">จัด QR Code ให้อยู่ในกรอบเพื่อเชื่อมต่ออัตโนมัติ</p>
+    </div>
+    <div id="reader"></div>
+  </div>
+</div>
+
+<div class="page" id="pgWorker">
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nav-icon">⛑️</div>
+      <div><div class="nav-title">หน้าผู้สวมหมวก</div><div class="nav-sub">Worker</div></div>
+    </div>
+    <div class="nav-r">
+      <div class="status-pill">
+        <div class="sdot" id="wDot"></div>
+        <span class="slabel" id="wDotLbl">ออฟไลน์</span>
+      </div>
+      <button class="btn-nav" onclick="go('pgHome')">← กลับ</button>
+    </div>
+  </nav>
+
+  <div class="w-body">
+    <div class="w-card">
+      <div class="w-card-top">
+        <span class="w-helmet-small">⛑️</span>
+        <div class="w-card-title">บันทึกข้อมูลผู้ใช้งาน</div>
+        <div class="w-card-sub">หมวกจะอัปเดตข้อมูลไปยังระบบส่วนกลางทันที</div>
+      </div>
+      
+      <div class="w-card-body">
+        <div class="device-display-box">
+          <div class="device-display-label">กำลังเชื่อมต่อกับหมวกหมายเลข</div>
+          <div class="device-display-val" id="displayHelmetId">-- รอการสแกน --</div>
+        </div>
+
+        <div class="field">
+          <label>ชื่อ-นามสกุล ของคุณ</label>
+          <input id="wName" type="text" placeholder="เช่น สมชาย ใจดี">
+        </div>
+        <div class="field">
+          <label>รหัสพนักงาน (ถ้ามี)</label>
+          <input id="wEID" type="text" placeholder="เช่น EMP001">
+        </div>
+
+        <button class="btn-main cyan" id="wSendBtn" onclick="workerSend()">✅ บันทึกชื่อเข้าหมวก</button>
+      </div>
+      
+      <div class="w-status-bar">
+        <div class="w-status-dot" id="wStatusDot"></div>
+        <span id="wStatusTxt">ยังไม่ได้เชื่อมต่อ</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pgLogin">
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nav-icon" style="--ni-bg:linear-gradient(135deg,var(--orange),#c2410c);">🔐</div>
+      <div><div class="nav-title">เข้าสู่ระบบหัวหน้า</div><div class="nav-sub">Supervisor Access</div></div>
+    </div>
+    <div class="nav-r">
+      <button class="btn-nav" onclick="go('pgHome')">← กลับ</button>
+    </div>
+  </nav>
+  <div class="login-wrap" style="margin:auto;">
+    <div class="login-box">
+      <span class="login-icon">🔒</span>
+      <div class="login-title">ใส่รหัสหัวหน้า</div>
+      <div class="login-sub">กด PIN 4 หลักเพื่อเข้าใช้งาน</div>
+      <div class="pin-row">
+        <div class="pin-circle" id="pc0"></div><div class="pin-circle" id="pc1"></div>
+        <div class="pin-circle" id="pc2"></div><div class="pin-circle" id="pc3"></div>
+      </div>
+      <div class="pad">
+        <div class="pkey" onclick="pp('1')">1</div><div class="pkey" onclick="pp('2')">2</div><div class="pkey" onclick="pp('3')">3</div>
+        <div class="pkey" onclick="pp('4')">4</div><div class="pkey" onclick="pp('5')">5</div><div class="pkey" onclick="pp('6')">6</div>
+        <div class="pkey" onclick="pp('7')">7</div><div class="pkey" onclick="pp('8')">8</div><div class="pkey" onclick="pp('9')">9</div>
+        <div class="pkey nil"></div><div class="pkey" onclick="pp('0')">0</div><div class="pkey del" onclick="pd()">⌫</div>
+      </div>
+      <div class="pin-err" id="pinErr">รหัสไม่ถูกต้อง กรุณาลองใหม่</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pgBoss">
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nav-icon" style="--ni-bg:linear-gradient(135deg,var(--orange),#c2410c);">👔</div>
+      <div><div class="nav-title">หัวหน้างาน — Dashboard</div><div class="nav-sub">Supervisor</div></div>
+    </div>
+    <div class="nav-r">
+      <div class="status-pill" id="bStatusPill" style="display:none;">
+        <div class="sdot" id="bDot"></div><span class="slabel" id="bDotLbl">ออฟไลน์</span>
+      </div>
+      <button class="btn-nav" onclick="bossLogout()">🔒 ออก</button>
+    </div>
+  </nav>
+
+  <div class="boss-body">
+    <div class="boss-top">
+      <div style="font-size: 0.9rem; color: var(--white); font-weight: 600;">🟢 ระบบติดตามพร้อมใช้งาน</div>
+      <div class="boss-top-btns">
+        <button class="btn-orange" onclick="bossStartAll()">🔌 เริ่มติดตามทั้งหมด</button>
+        <button class="btn-outline" onclick="bossStopAll()">⏹ หยุด</button>
+      </div>
+    </div>
+
+    <div class="sos-banner" id="sosBanner">
+      <div>
+        <div class="banner-msg">🚨 <span id="bannerTxt">มีการแจ้งเตือน SOS!</span></div>
+        <div class="banner-sub" id="bannerSub">กรุณาตรวจสอบการ์ดด้านล่าง</div>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="sum-card"><div class="sum-label">หมวกทั้งหมด</div><div class="sum-val" id="sumTotal">0</div></div>
+      <div class="sum-card"><div class="sum-label">ออนไลน์</div><div class="sum-val g" id="sumOnline">0</div></div>
+      <div class="sum-card"><div class="sum-label">SOS แจ้งเตือน</div><div class="sum-val r" id="sumSOS">0</div></div>
+      <div class="sum-card"><div class="sum-label">สิ่งกีดขวาง</div><div class="sum-val o" id="sumObs">0</div></div>
+    </div>
+
+    <div class="add-helmet-box">
+      <div class="add-helmet-title">➕ เพิ่มหมวก / อุปกรณ์ที่ต้องติดตาม</div>
+      <div class="add-row">
+        <div class="add-field"><label>ชื่อเรียกหมวก</label><input id="aLabel" type="text" placeholder="เช่น หมวกใบที่ 1"></div>
+        <div class="add-field"><label>Device ID</label><input id="aDevice" type="text" placeholder="helmet_01"></div>
+        <button class="btn-add" onclick="addHelmet()">+ เพิ่ม</button>
+      </div>
+    </div>
+
+    <div class="helmets-grid" id="helmetsGrid">
+      <div class="empty-state" id="emptyState"><span class="ei">⛑️</span><p>ยังไม่มีหมวกในระบบ<br>เพิ่มหมวกด้านบนเพื่อเริ่มติดตาม</p></div>
+    </div>
+
+    <div class="log-box">
+      <div class="log-title">📋 บันทึกเหตุการณ์</div>
+      <div class="log-list" id="bLog"><div class="log-item"><span class="log-t">--:--:--</span><span class="log-m info">รอการเชื่อมต่อ…</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
