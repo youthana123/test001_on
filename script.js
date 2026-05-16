@@ -2,8 +2,8 @@
    ⚙️ ตั้งค่า THINGER.IO
    ════════════════════════════════════════ */
 const APP_CONFIG = {
-  USERNAME: "YOUR_THINGER_USERNAME",  // <-- ใส่ Username ของคุณที่นี่
-  TOKEN:    "YOUR_DEVICE_TOKEN"       // <-- ใส่ Access Token
+  USERNAME: "Yout45",  // <-- ใส่ Username ของคุณที่นี่
+  TOKEN:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXYiOiJoZWxtZXRfMDEiLCJpYXQiOjE3Nzg0MTA0NTYsImp0aSI6IjZhMDA2M2Q4ZDYxYTdkYWFmODBhMmQ1YSIsInN2ciI6ImFwLXNvdXRoZWFzdC5hd3MudGhpbmdlci5pbyIsInVzciI6IllvdXQ0NSJ9.uyA0o7BSQuhDA5OX59Ya5n6HUO4e74UADg91rComJ8g"       // <-- ใส่ Access Token
 };
 
 let currentWorkerDevice = ""; 
